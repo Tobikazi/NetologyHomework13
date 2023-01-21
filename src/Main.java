@@ -1,6 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.ParseException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -10,22 +10,18 @@ public class Main {
             new Product("Яблоки (1 кг.)", 140.0),
     };
 
-    public static void main(String[] args) throws FileNotFoundException, ParseException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner sc = new Scanner(System.in);
         String s;
-        Basket shoppingCart;
+        Basket shoppingCart = new Basket(products);
         int selectedItem;
         int itemCount;
-        File basketFile = new File("basket.txt");
+        File basketFile = new File("basket.bin");
         if (basketFile.exists()) {
             System.out.println("Перезаписать список?");
             if (sc.nextLine().equals("")) {
-                shoppingCart = Basket.loadFromTxtFile(basketFile);
-            } else {
-                shoppingCart = new Basket(products);
+                shoppingCart = Basket.loadFromBinFile(basketFile);
             }
-        } else {
-            shoppingCart = new Basket(products);
         }
         while (true) {
             shoppingCart.printProductsList();
@@ -35,7 +31,6 @@ public class Main {
                 try {
                     selectedItem = Integer.parseInt(inputValues[0]);
                     itemCount = Integer.parseInt(inputValues[1]);
-
                     if (selectedItem <= 0 || selectedItem > products.length) {
                         System.out.print("\nНеправильный номер продукта\n");
                         continue;
@@ -44,9 +39,8 @@ public class Main {
                         continue;
                     }
                     shoppingCart.addToCart(selectedItem - 1, itemCount);
-                    shoppingCart.saveTxt(basketFile);
+                    shoppingCart.saveBin(basketFile);
                 } catch (NumberFormatException nfe) {
-
                     System.out.println("\nИспользовать нужно целые числа");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);

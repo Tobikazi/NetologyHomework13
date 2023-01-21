@@ -1,13 +1,5 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Stream;
-public class Basket {
+import java.io.*;
+public class Basket implements Serializable {
     private final Product[] products;
     private double totalValue = 0;
     public Basket(Product[] products) {
@@ -41,25 +33,15 @@ public class Basket {
         }
         System.out.printf("ИТОГО Товаров в корзине на %10.2f\n\n", totalValue);
     }
-    public void saveTxt(File textFile) throws FileNotFoundException {
-        var pw = new PrintWriter(textFile);
-        Stream.of(products).forEach(p -> pw.printf("%s@%.4f@%d\n", p.getName(), p.getPrice(), p.getInBasket()));
-        pw.close();
+    public void saveBin(File file) throws IOException {
+        var fileOutputStream = new FileOutputStream(file);
+        var objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(this);
+        objectOutputStream.close();
     }
-    static Basket loadFromTxtFile(File textFile) throws FileNotFoundException, ParseException {
-        Scanner sc = new Scanner(textFile);
-        List<Product> products = new ArrayList<>();
-        String name;
-        double price;
-        int inBasket;
-        NumberFormat nf = NumberFormat.getInstance();
-        while (sc.hasNext()) {
-            String[] d = sc.nextLine().split(" ");
-            name = d[0];
-            price = nf.parse(d[1]).doubleValue();
-            inBasket = Integer.parseInt(d[2]);
-            products.add(new Product(name, price, inBasket));
-        }
-        return new Basket(products.toArray(Product[]::new));
+    public static Basket loadFromBinFile(File file) throws IOException, ClassNotFoundException {
+        var fileInputStream = new FileInputStream(file);
+        var objectInputStreams = new ObjectInputStream(fileInputStream);
+        return (Basket) objectInputStreams.readObject();
     }
 }
