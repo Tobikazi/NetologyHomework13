@@ -1,4 +1,11 @@
 import java.io.*;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Stream;
+
 public class Basket implements Serializable {
     private final Product[] products;
     private double totalValue = 0;
@@ -33,14 +40,24 @@ public class Basket implements Serializable {
         }
         System.out.printf("ИТОГО Товаров в корзине на %10.2f\n\n", totalValue);
     }
-    public void saveTxt(File file) throws IOException {
-        var fileOutputStream = new FileOutputStream(file);
-        var objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        objectOutputStream.writeObject(this);
-        objectOutputStream.close();
+    public void saveTxt(File file) throws FileNotFoundException {
+        var pw = new PrintWriter(file);
+        Stream.of(products).forEach(p ->
+                pw.printf("%s@%.4f@%d\n", p.getName(), p.getPrice(), p.getInBasket()));
+        pw.close();
     }
-    public static Basket loadFromTxtFile(File file) throws IOException, ClassNotFoundException {
-        var fileInputStream = new FileInputStream(file);
-        var objectInputStreams = new ObjectInputStream(fileInputStream);
-        return (Basket) objectInputStreams.readObject();
+    public static Basket loadFromTxtFile(File file) throws IOException, ParseException {
+        Scanner sc = new Scanner(file);
+        List<Product> goods = new ArrayList<>();
+        String name;
+        double price;
+        NumberFormat nf = NumberFormat.getInstance();
+        while (sc.hasNext()) {
+            String[] d = sc.nextLine().split("_");
+            name = d[0];
+            price = nf.parse(d[1]).doubleValue();
+            goods.add(new Product(name, price));
+        }
+        return new Basket(goods.toArray(Product[]::new));
     }
+}
