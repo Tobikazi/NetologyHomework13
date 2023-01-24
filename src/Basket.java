@@ -33,15 +33,14 @@ public class Basket implements Serializable {
         }
         System.out.printf("ИТОГО Товаров в корзине на %10.2f\n\n", totalValue);
     }
-    public void saveBin(File file) throws IOException {
+    public void saveTxt(File file) throws IOException {
         var fileOutputStream = new FileOutputStream(file);
         var objectOutputStream = new ObjectOutputStream(fileOutputStream);
         objectOutputStream.writeObject(this);
         objectOutputStream.close();
     }
-    public static Basket loadFromBinFile(File file) throws IOException, ClassNotFoundException {
+    public static Basket loadFromTxtFile(File file) throws IOException, ClassNotFoundException {
         var fileInputStream = new FileInputStream(file);
         var objectInputStreams = new ObjectInputStream(fileInputStream);
         return (Basket) objectInputStreams.readObject();
     }
-}
