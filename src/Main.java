@@ -16,11 +16,11 @@ public class Main {
         Basket shoppingCart = new Basket(products);
         int selectedItem;
         int itemCount;
-        File basketFile = new File("basket.bin");
+        File basketFile = new File("basket.txt");
         if (basketFile.exists()) {
             System.out.println("Перезаписать список?");
             if (sc.nextLine().equals("")) {
-                shoppingCart = Basket.loadFromBinFile(basketFile);
+                shoppingCart = Basket.loadFromTxtFile(basketFile);
             }
         }
         while (true) {
@@ -39,7 +39,7 @@ public class Main {
                         continue;
                     }
                     shoppingCart.addToCart(selectedItem - 1, itemCount);
-                    shoppingCart.saveBin(basketFile);
+                    shoppingCart.saveTxt(basketFile);
                 } catch (NumberFormatException nfe) {
                     System.out.println("\nИспользовать нужно целые числа");
                 } catch (FileNotFoundException e) {
