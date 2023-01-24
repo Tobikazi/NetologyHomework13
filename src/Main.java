@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class Main {
@@ -10,7 +11,7 @@ public class Main {
             new Product("Яблоки (1 кг.)", 140.0),
     };
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ParseException {
         Scanner sc = new Scanner(System.in);
         String s;
         Basket shoppingCart = new Basket(products);
